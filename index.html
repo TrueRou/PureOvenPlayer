@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+  window.PlayerConfig = {
+    player: {
+      autoStart: true,
+      autoFallback: false,
+      defaultSourceIndex: 0,
+      sources: [
+        {
+          type: 'webrtc',
+          file: '{wsProtocol}//demo.ovenplayer.com{signallingPort}/app/stream?transport=tcp',
+          label: 'WebRTC/TCP'
+        },
+        {
+          type: 'webrtc',
+          file: '{wsProtocol}//demo.ovenplayer.com{signallingPort}/app/stream',
+          label: 'WebRTC'
+        },
+        {
+          type: 'hls',
+          file: '{httpProtocol}//demo.ovenplayer.com{httpStreamingPort}/app/stream/llhls.m3u8',
+          label: 'LL-HLS'
+        }
+      ]
+    },
+    theme: {
+      pageBackground: {
+        color: '#eef3ff',
+        image: '',
+        gradient: 'linear-gradient(120deg, #eef3ff 0%, #ffffff 45%, #f4f8ff 100%)',
+        size: 'cover',
+        position: 'center center',
+        repeat: 'no-repeat'
+      },
+      sourceButton: {
+        activeBackground: '#0d6efd',
+        activeColor: '#ffffff',
+        inactiveBackground: '#ffffff',
+        inactiveColor: '#0d6efd',
+        borderColor: '#0d6efd'
+      },
+      brand: {
+        text: 'OVENPLAYER',
+        href: '/',
+        color: '#1f2937'
+      }
+    }
+  };
+</script>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <title>OvenPlayer</title>
+  <link rel="icon" href="./assets/images/00_OvenPlayer_Favicon.svg">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.0/mdb.min.css" rel="stylesheet" />
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-40491361-8');
+  </script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      background: #f4f6fb;
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0, 0, 0, 0.55)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important;
+    }
+
+    .source-switcher .btn {
+      border-width: 1px;
+      border-style: solid;
+      transition: all 0.2s ease;
+    }
+
+    .source-switcher .btn:hover {
+      transform: translateY(-1px);
+    }
+  </style>
+
+
+  <!-- VUE -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+
+  <!-- underscore -->
+  <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.1/underscore-umd-min.js"></script>
+
+  <!-- jquery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+    integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+
+  <!-- highlightjs -->
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+
+  <!-- js-beautify -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify.min.js"></script>
+
+  <!-- clipboard -->
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+
+  <!-- popperjs -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+
+  <!-- hls.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
+
+  <!-- OvenPlayer -->
+  <script src="https://cdn.jsdelivr.net/npm/ovenplayer@0.10.21/dist/ovenplayer.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container-lg">
+      <a id="navbar-brand-link" class="navbar-brand" href="/">OVENPLAYER</a>
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+        aria-controls="navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/OvenMediaLabs/OvenPlayer" target="_blank">GitHub</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://docs.ovenplayer.com/" target="_blank">Docs</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div id="demo-navi" class="container-lg mt-4">
+
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div id="player"></div>
+        <div class="mt-3">
+          <div class="fw-bold mb-2">播放方式</div>
+          <div class="source-switcher d-flex flex-wrap gap-2">
+            <button v-for="(source, index) in availableSources" :key="source.label + '-' + index" type="button"
+              class="btn btn-sm" :style="getSourceButtonStyle(index)" @click="switchSource(index)">
+              {{ source.label || ('Source ' + (index + 1)) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="bg-light border-top mt-5">
+    <div class="container-lg mt-3">
+      <footer class="text-center text-lg-start">
+        <section class="p-3 pt-0">
+          <div class="row d-flex align-items-center">
+            <div class="col-md-7 col-lg-8 text-center text-md-start">
+              <div class="p-3">
+                © Copyright
+                <a class="" href="https://ovenmedialabs.com">OvenMedia Labs</a>
+                Inc. All rights reserved.
+              </div>
+            </div>
+
+            <div class="col-md-5 col-lg-4 ml-lg-0 text-center text-md-end">
+              <!-- linked in -->
+              <a class="btn btn-floating m-1" class="" role="button" target="_blank"
+                href="https://www.linkedin.com/company/airensoft"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+
+    var navProtocol = window.location.protocol;
+    var wsProtocol = 'ws:';
+    var httpProtocol = 'http:';
+    var signallingPort = ':3332';
+    var httpStreamingPort = ':3332';
+
+    if (navProtocol === 'https:') {
+      wsProtocol = 'wss:';
+      httpProtocol = 'https:';
+      signallingPort = ':3333';
+      httpStreamingPort = ':3333';
+    }
+
+    var defaultSources = [
+      {
+        type: 'webrtc',
+        file: '{wsProtocol}//demo.ovenplayer.com{signallingPort}/app/stream?transport=tcp',
+        label: 'WebRTC/TCP'
+      },
+      {
+        type: 'webrtc',
+        file: '{wsProtocol}//demo.ovenplayer.com{signallingPort}/app/stream',
+        label: 'WebRTC'
+      },
+      {
+        type: 'hls',
+        file: '{httpProtocol}//demo.ovenplayer.com{httpStreamingPort}/app/stream/llhls.m3u8',
+        label: 'Low-Latency HLS'
+      }
+    ];
+
+    var playerConfig = window.PlayerConfig || {};
+    var configuredPlayer = playerConfig.player || {};
+    var configuredTheme = playerConfig.theme || {};
+
+    var player = "", errorOccured = false;
+
+    function resolveSourceUrl(url) {
+      if (!url) {
+        return '';
+      }
+
+      return url
+        .replace('{wsProtocol}', wsProtocol)
+        .replace('{httpProtocol}', httpProtocol)
+        .replace('{signallingPort}', signallingPort)
+        .replace('{httpStreamingPort}', httpStreamingPort);
+    }
+
+    function getAvailableSources() {
+      var rawSources = configuredPlayer.sources && configuredPlayer.sources.length ? configuredPlayer.sources : defaultSources;
+      return rawSources.map(function (source) {
+        return {
+          type: source.type,
+          file: resolveSourceUrl(source.file),
+          label: source.label
+        };
+      });
+    }
+
+    var availableSources = getAvailableSources();
+    var defaultSourceIndex = typeof configuredPlayer.defaultSourceIndex === 'number' ? configuredPlayer.defaultSourceIndex : 0;
+
+    if (!availableSources.length) {
+      availableSources = getAvailableSources(defaultSources);
+      defaultSourceIndex = 0;
+    }
+
+    if (defaultSourceIndex < 0 || defaultSourceIndex >= availableSources.length) {
+      defaultSourceIndex = 0;
+    }
+
+    function getSourceButtonTheme() {
+      var buttonTheme = configuredTheme.sourceButton || {};
+      return {
+        activeBackground: buttonTheme.activeBackground || '#0d6efd',
+        activeColor: buttonTheme.activeColor || '#ffffff',
+        inactiveBackground: buttonTheme.inactiveBackground || '#ffffff',
+        inactiveColor: buttonTheme.inactiveColor || '#0d6efd',
+        borderColor: buttonTheme.borderColor || '#0d6efd'
+      };
+    }
+
+    function applyTheme() {
+      var pageBackground = configuredTheme.pageBackground || {};
+      var brand = configuredTheme.brand || {};
+
+      if (pageBackground.gradient) {
+        document.body.style.backgroundImage = pageBackground.gradient;
+      }
+      if (pageBackground.image) {
+        document.body.style.backgroundImage = 'url("' + pageBackground.image + '")';
+      }
+
+      document.body.style.backgroundColor = pageBackground.color || '#f4f6fb';
+      document.body.style.backgroundSize = pageBackground.size || 'cover';
+      document.body.style.backgroundPosition = pageBackground.position || 'center center';
+      document.body.style.backgroundRepeat = pageBackground.repeat || 'no-repeat';
+
+      var brandLink = document.getElementById('navbar-brand-link');
+      if (brandLink) {
+        brandLink.textContent = brand.text || 'OVENPLAYER';
+        brandLink.href = brand.href || '/';
+        brandLink.style.color = brand.color || '#1f2937';
+      }
+    }
+
+    function bindPlayerEvents() {
+      player.on("ready", function () {
+        errorOccured = false;
+        navigation.errorMessage = "";
+        navigation.titleStatus = "LIVE";
+      });
+      player.on("stateChanged", function (data) {
+        if (data && data.newstate && (data.newstate === "playing" || data.newstate === "pause")) {
+          navigation.titleStatus = "LIVE";
+        }
+      });
+      player.on("error", function (error) {
+        errorOccured = true;
+        console.log(error);
+        navigation.errorMessage = error.message;
+        navigation.titleStatus = "OFFLINE";
+      });
+    }
+
+    function createPlayerBySourceIndex(index) {
+      var source = navigation.availableSources[index];
+
+      if (!source) {
+        return;
+      }
+
+      if (player && player.remove) {
+        player.remove();
+      }
+
+      navigation.selectedSourceIndex = index;
+
+      player = OvenPlayer.create("player", {
+        autoStart: configuredPlayer.autoStart !== false,
+        autoFallback: configuredPlayer.autoFallback === true,
+        sources: [source]
+      });
+
+      bindPlayerEvents();
+    }
+
+    $(document).ready(function () {
+
+      // OvenPlayer.debug(true);
+      applyTheme();
+      createPlayerBySourceIndex(defaultSourceIndex);
+
+    });
+
+    var navigation = new Vue({
+      el: '#demo-navi',
+      data: {
+        errorMessage: "",
+        titleStatus: "loading...",
+        availableSources: availableSources,
+        selectedSourceIndex: defaultSourceIndex,
+        sourceButtonTheme: getSourceButtonTheme()
+      },
+      methods: {
+        switchSource: function (index) {
+          this.errorMessage = "";
+          this.titleStatus = "loading...";
+          createPlayerBySourceIndex(index);
+        },
+        getSourceButtonStyle: function (index) {
+          var isActive = this.selectedSourceIndex === index;
+          return {
+            backgroundColor: isActive ? this.sourceButtonTheme.activeBackground : this.sourceButtonTheme.inactiveBackground,
+            color: isActive ? this.sourceButtonTheme.activeColor : this.sourceButtonTheme.inactiveColor,
+            borderColor: this.sourceButtonTheme.borderColor
+          };
+        },
+        loadSources: function () {
+          this.switchSource(this.selectedSourceIndex);
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
